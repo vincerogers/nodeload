@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+	<script>
+		$(document).ready(function(){
+			$('#fileSelect').change(function() 
+			{
+				var files = this.files; // FileList object
+				// Loop through the FileList and render image files as thumbnails.
+				// for (var i = 0, f; f = files[i]; i++) 
+				// {
+				// 	var reader = new FileReader();
+				// 	// Closure to capture the file information.
+				// 	reader.onload = (function(theFile) 
+				// 	{
+				// 		return function(e) 
+				// 		{
+				// 			// Render thumbnail.
+							
+				// 			var span = document.createElement('span');
+				// 			span.innerHTML = ['<img class="thumb" src="', e.target.result,
+				// 			'" title="', escape(theFile.name), '"/>'].join('');
+
+				// 			$('#list').before(span); 
+				// 		}
+				// 	})(f);
+
+				// 	// Read in the image file as a data URL.
+				// 	reader.readAsDataURL(f);
+				// }
+
+				// The first parameter defines the type of storage: persistent or temporary
+				// Next, set the size of space needed (in bytes)
+				// initFs is the success callback
+				// And the last one is the error callback
+				// for denial of access and other errors.
+
+				// successCallback
+				// The success callback that is called when the browser provides a file system. Its argument is the FileSystem object with two properties:
+				// name - the unique name assigned by the browser to the file system.
+				// root - the read-only DirectoryEntry object representing the root of the file system.
+				window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+				window.requestFileSystem(window.TEMPORARY, 1024*1024, function(fs) 
+				{
+					// Duplicate each file the user selected to the app's fs.
+					for (var i = 0, file; file = files[i]; ++i)
+					{
+						// Capture current iteration's file in local scope for the getFile() callback.
+						(function(f) 
+						{
+							fs.root.getFile(f.name, {create: true}, function(fileEntry) 
+							{
+								alert(fileEntry.fullPath);
+								
+								// Create a FileWriter object for our FileEntry
+						  		fileEntry.createWriter(function(fileWriter) 
+						  		{
+						   			fileWriter.write(f); // Note: write() can take a File or Blob object.
+						  		}, errorHandler);
+							}, errorHandler);
+						})(file);
+
+					}
+				}, errorHandler);
+
+			}).change();
+		});
+
+		function errorHandler(e) 
+		{
+			console.log(e);
+			var msg = '';
+
+			switch (e.code) {
+				case FileError.QUOTA_EXCEEDED_ERR:
+					msg = 'QUOTA_EXCEEDED_ERR';
+					break;
+				case FileError.NOT_FOUND_ERR:
+					msg = 'NOT_FOUND_ERR';
+					break;
+				case FileError.SECURITY_ERR:
+					msg = 'SECURITY_ERR';
+					break;
+				case FileError.INVALID_MODIFICATION_ERR:
+					msg = 'INVALID_MODIFICATION_ERR';
+					break;
+				case FileError.INVALID_STATE_ERR:
+					msg = 'INVALID_STATE_ERR';
+					break;
+				default:
+					msg = 'Unknown Error';
+					break;
+			};
+
+			console.log('Error: ' + msg);
+		}
+		// var socket = io.connect('http://localhost');
+		// socket.on('news', function (data) {
+		// console.log(data);
+		// socket.emit('my other event', { my: 'data' });
+		
+	</script>
+
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <input type = "file" id="fileSelect">
+    <span id="list"></span>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/jszip/jszip.js"/>
+    <script src="/javascripts/jszip/jszip-load.js"/>
+	
+	<script src="/javascripts/jszip/jszip-deflate.js"/>
+	
+  </body>
+
+
+</html>
+
