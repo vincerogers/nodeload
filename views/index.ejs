@@ -66,41 +66,46 @@
 						  		fileEntry.file(
 						  			function(file){
 							  			var socket = io.connect('http://localhost');
-							  			var chunkSize = 100;
-							  			var fileSize = file.size - 1;
+							  			var chunkSize = 1000;
+							  			var fileSize = file.size;
 							  			var start = 0;
 							  			var chunkCount = 1;
 							  			var end = Math.min(fileSize, chunkSize);
 
 							  			socket.emit('startFile', file.name);
 							  			var count = 0;
-
-
 							  			while(start < fileSize)
 							  			{
 							  				var reader = new FileReader();
-							  				reader.onload = function(e){
-							  					console.log("Log: " + e.target.result);
-							  					var data = {
-							  						"data" : e.target.result,
-							  						"sequence" : chunkCount++
-							  					};
-							  					socket.emit("sendChunk", data, function(data){
-							  						console.log("Confirmation recieved");
-							  					});
-												console.log("Log: Sent");
-							  				};
 
-							  				reader.onerror = function(e){
-							  					alert(e.getMessage());
-							  				};
-							  				console.log("Slicing " + start + " through " + end)
-							  				var blob = file.slice(start, end + 1);
+							  				(function setSequence(seq){
+								  				reader.onload = function(e){
+								  					var data = {
+								  						//binary to base64
+								  						"data" : window.btoa(e.target.result),
+								  						"sequence" : seq
+								  					};
+
+								  					socket.emit("sendChunk", data, function(msg){
+								  						console.log("Confirmation recieved: " + msg);
+								  					});
+													console.log("Log: Sent " + seq);
+								  				};
+								  			})(chunkCount++);
+
+							  				// reader.onerror = function(e){
+							  				// 	alert(e);
+							  				// 	console.log(e);
+							  				// };
+							  				//console.log("Slicing " + start + " through " + end)
+							  				var blob = file.slice(start, end);
 							  				reader.readAsBinaryString(blob);
-							  				start += chunkSize;
-							  				end += chunkSize;
+							  				start = end;
+							  				end = end + chunkSize;
 
 							  			}
+
+							  			socket.emit('endFile');
 							  			//socket.disconnect();
 										//socket.on('news', function (data) {
 										//console.log(data);
