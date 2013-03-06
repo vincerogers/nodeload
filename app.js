@@ -54,8 +54,8 @@
 			fs.unlink(path + fileName);
 		});
 
-		socket.on('sendChunk', function (data, returnMsg) {	
-			console.log("Received sequence " + data.sequence );	
+		socket.on('sendChunk', function (data, returnMsg) {
+			console.log("Received sequence " + data.sequence );
 			var decoded =  new Buffer(data.data, 'base64').toString('binary');
 			fs.appendFileSync(path + fileName, decoded, 'binary');
 			console.log(data.sequence + ' - The data was appended to file ' + fileName);
@@ -67,19 +67,3 @@
 		});
 
 	});
-
-	function writeData()
-	{
-			if(socketInProcess || !socketFileQueue.length)
-				return;
-
-			socketInProcess = true;
-			var chunk = socketFileQueue.shift();
-			fs.appendFile(path + fileName, chunk.data, function (err) {
-				if (err) 
-					throw err;
-				socketInProcess = false;
-				console.log(chunk.sequence + ' - The data was appended to file ' + fileName);
-			});			
-			writeData();			
-	}

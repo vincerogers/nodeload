@@ -6,31 +6,9 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 	<script>
 		$(document).ready(function(){
-			$('#fileSelect').change(function() 
+			$('#fileSelect').change(function()
 			{
 				var files = this.files; // FileList object
-				// Loop through the FileList and render image files as thumbnails.
-				// for (var i = 0, f; f = files[i]; i++) 
-				// {
-				// 	var reader = new FileReader();
-				// 	// Closure to capture the file information.
-				// 	reader.onload = (function(theFile) 
-				// 	{
-				// 		return function(e) 
-				// 		{
-				// 			// Render thumbnail.
-							
-				// 			var span = document.createElement('span');
-				// 			span.innerHTML = ['<img class="thumb" src="', e.target.result,
-				// 			'" title="', escape(theFile.name), '"/>'].join('');
-
-				// 			$('#list').before(span); 
-				// 		}
-				// 	})(f);
-
-				// 	// Read in the image file as a data URL.
-				// 	reader.readAsDataURL(f);
-				// }
 
 				// The first parameter defines the type of storage: persistent or temporary
 				// Next, set the size of space needed (in bytes)
@@ -43,22 +21,22 @@
 				// name - the unique name assigned by the browser to the file system.
 				// root - the read-only DirectoryEntry object representing the root of the file system.
 				window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
-				window.requestFileSystem(window.TEMPORARY, 1024*1024, function(fs) 
+				window.requestFileSystem(window.TEMPORARY, 1024*1024, function(fs)
 				{
 					// Duplicate each file the user selected to the app's fs.
 					for (var i = 0, file; file = files[i]; ++i)
 					{
 						// Capture current iteration's file in local scope for the getFile() callback.
-						(function(f) 
+						(function(f)
 						{
-							//The FileEntry interface of the File System API represents 
+							//The FileEntry interface of the File System API represents
 							//a file in a file system. It lets you write content to a file.
-							fs.root.getFile(f.name, {create: true}, function(fileEntry) 
+							fs.root.getFile(f.name, {create: true}, function(fileEntry)
 							{
 								//alert(fileEntry.fullPath);
 
 								// Create a FileWriter object for our FileEntry
-						  		fileEntry.createWriter(function(fileWriter) 
+						  		fileEntry.createWriter(function(fileWriter)
 						  		{
 						   			fileWriter.write(f); // Note: write() can take a File or Blob object.
 						  		}, errorHandler);
@@ -93,11 +71,6 @@
 								  				};
 								  			})(chunkCount++);
 
-							  				// reader.onerror = function(e){
-							  				// 	alert(e);
-							  				// 	console.log(e);
-							  				// };
-							  				//console.log("Slicing " + start + " through " + end)
 							  				var blob = file.slice(start, end);
 							  				reader.readAsBinaryString(blob);
 							  				start = end;
@@ -106,28 +79,7 @@
 							  			}
 
 							  			socket.emit('endFile');
-							  			//socket.disconnect();
-										//socket.on('news', function (data) {
-										//console.log(data);
-										
-										
-										// var reader = new FileReader();
-										// reader.onload = function(e){
-										// 	var fileArrayBuffer = e.target.result;
-										// 	alert(fileArrayBuffer.byteLength);
-										// 	for(var x = 0; x < fileArrayBuffer.byteLength; x+= chunkSize)
-										// 	{
-										// 		var view = new Uint16Array(fileArrayBuffer.slice(x, chunkSize));
-										// 		socket.emit("sendChunk", view);
-										// 	}
-										// };
-										// console.log("initializing reader");
-										// reader.readAsArrayBuffer(file);
-										// console.log("reader fired");
-										// //socket.emit('endFile');
-										// if(socket.transport)
-										// 	socket.disconnect();
-							  	 		}
+							  	 	}
 						  		, errorHandler);
 
 							}, errorHandler);
@@ -138,7 +90,7 @@
 			}).change();
 		});
 
-		function errorHandler(e) 
+		function errorHandler(e)
 		{
 			console.log(e);
 			var msg = '';
@@ -170,7 +122,7 @@
 		// socket.on('news', function (data) {
 		// console.log(data);
 		// socket.emit('my other event', { my: 'data' });
-		
+
 	</script>
 
   </head>
@@ -182,9 +134,9 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascripts/jszip/jszip.js"/>
     <script src="/javascripts/jszip/jszip-load.js"/>
-	
+
 	<script src="/javascripts/jszip/jszip-deflate.js"/>
-	
+
   </body>
 
 
